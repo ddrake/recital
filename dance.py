@@ -1,8 +1,13 @@
+#! /usr/bin/python3
 import random
+import sys
 
 class DanceSequence:
     def __init__(self, dances=None):
-        self.dances = dances if dances else []
+        if not dances:
+            raise ValueError("Each sequence must contain at least one dance")
+        
+        self.dances = dances
 
     def __str__(self):
         return ", ".join([str(d) for d in self.dances])
@@ -75,12 +80,31 @@ def make_test_data():
         print(s)
     return seqs
 
-# read dance sequences from a file
-# separate sequences by lines
-# separate dances within seqences by semicolons
-# separate dancers in a dance by spaces
+if len(sys.argv) > 1:
+    try:
+        with open(sys.argv[1],'r') as f:
+            contents = f.read()
+    except Exception as ex:
+        print(ex)
+        sys.exit(2)
 
-seqs = make_test_data()
+    try:
+        lines = contents.strip().split('\n')
+        lines = [line for line in lines if line and line[0] != '#']
+        seqs = []
+        for line in lines:
+            tseqs = line.strip().split(';')
+            seqs.append(DanceSequence([set(tseq.strip().split()) for tseq in tseqs if tseq]))
+            #print([set(tseq.strip().split()) for tseq in tseqs])
+    except Exception as ex:
+        print(ex)
+        sys.exit(2)
+else:
+    seqs = make_test_data()
+
+for s in seqs:
+    print(s)
+
 programs = step([],seqs)
 print(len(programs))
 for p in programs:

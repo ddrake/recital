@@ -1,1 +1,14 @@
+# separate sequences by lines
+# separate dances within seqences by semicolons
+# separate dancers in a dance by spaces
+# ignore blank lines and lines preceded by a pound sign
 
+# sequence: dance 1; dance 2
+joe jan amy; sue ann jeff sam john josie
+ann zoe
+mary sadie kelsey jeff zoe
+fred kim betty sam; jan jeff phil stu carmen 
+sue john ann josie fred stu
+ana betty zoe ann
+adam zed phil zoe kim
+lucy sadie ann; jeff josie betty joe amy
