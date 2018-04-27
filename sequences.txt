@@ -2,13 +2,15 @@
 # separate dances within seqences by semicolons
 # separate dancers in a dance by spaces
 # ignore blank lines and lines preceded by a pound sign
+# optional dance name separated from dancers by a colon
+# optional sequence number separated by pipe "|"
 
 # sequence: dance 1; dance 2
-"Gavotte": joe jan amy; "Free Jazz": sue ann jeff sam john josie
+1| "Gavotte": joe jan amy; "Free Jazz": sue ann jeff sam john josie
 "Still Life": ann zoe
 "Over the Rainbow": mary sadie kelsey jeff zoe
 "Once in Awhile": fred kim betty sam; "Tomorrow": jan jeff phil stu carmen 
 "Get Happy": sue john ann josie fred stu
 "Cat and Mouse": ana betty zoe ann
 "Love Spelled Backwards": adam zed phil zoe kim
-"Cats": lucy sadie ann; "Kelsey's Cat": jeff josie betty joe amy
+8| "Cats": lucy sadie ann; "Kelsey's Cat": jeff josie betty joe amy
