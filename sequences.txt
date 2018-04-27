@@ -4,11 +4,11 @@
 # ignore blank lines and lines preceded by a pound sign
 
 # sequence: dance 1; dance 2
-joe jan amy; sue ann jeff sam john josie
-ann zoe
-mary sadie kelsey jeff zoe
-fred kim betty sam; jan jeff phil stu carmen 
-sue john ann josie fred stu
-ana betty zoe ann
-adam zed phil zoe kim
-lucy sadie ann; jeff josie betty joe amy
+"Gavotte": joe jan amy; "Free Jazz": sue ann jeff sam john josie
+"Still Life": ann zoe
+"Over the Rainbow": mary sadie kelsey jeff zoe
+"Once in Awhile": fred kim betty sam; "Tomorrow": jan jeff phil stu carmen 
+"Get Happy": sue john ann josie fred stu
+"Cat and Mouse": ana betty zoe ann
+"Love Spelled Backwards": adam zed phil zoe kim
+"Cats": lucy sadie ann; "Kelsey's Cat": jeff josie betty joe amy
