@@ -80,7 +80,6 @@ def solve(cur_prog, seqs):
     for s in seqs:
         if cur_prog.can_add_seq(s):
             new_prog = Program(cur_prog.dance_seqs[:])
-            assert new_prog.overlaps == cur_prog.overlaps, "overlaps changed"
             new_prog.add_seq(s)
             rest = seqs[:]
             rest.remove(s)
@@ -158,7 +157,7 @@ def parse_args():
     parser.add_argument('-f', help='Sequence file path.  If no file is set, random data will be used.')
     parser.add_argument('-n', type=int, default=0, help='Number of allowed overlaps')
     parser.add_argument('-a', action='store_true', \
-            help="After listing programs, show programs which are valid except for ordering")
+            help="After listing programs, show programs which are valid except for special ordering")
     ns = parser.parse_args(sys.argv[1:])
     return ns.a, ns.f, ns.n
 

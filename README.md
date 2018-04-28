@@ -23,7 +23,7 @@ optional arguments:
   -f F        Sequence file path. If no file is set, random data will be used.
   -n N        Number of allowed overlaps
   -a          After listing programs, show programs which are valid except for
-              ordering
+              special ordering
 ```
 ### Installation
 git clone git@github.com:ddrake/recital.git 
