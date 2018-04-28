@@ -13,6 +13,7 @@ A dance sequence may also be assigned a specific order within the program.  For 
 
 To test the algorithm with some randomly generated inputs, just run the program without specifying an input file.
 
+```
 usage: dance.py [-h] [-f F] [-n N] [-a]
 
 Compute possible programs for a recital.
@@ -23,6 +24,7 @@ optional arguments:
   -n N        Number of allowed overlaps
   -a          After listing programs, show programs which are valid except for
               ordering
+```
 ### Installation
 git clone git@github.com:ddrake/recital.git 
 
