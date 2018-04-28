@@ -7,24 +7,28 @@ import argparse
 # Class Definitions
 #-------------------
 class Dance:
-    def __init__(self, dancers, title="Untitled"):
+    def __init__(self, dancers, title='Untitled'):
         self.dancers = set(dancers) # dancers' names
         self.title = title
 
     def __str__(self):
-        return "{}: {}".format(self.title, str(self.dancers))
+        return '{}: {}'.format(self.title, str(self.dancers))
+
+    def pretty(self):
+        return '{}: {}'.format(self.title, ', ' \
+                .join(sorted(list(self.dancers))))
 
 class DanceSequence:
     def __init__(self, dances=None, order=None):
         if not dances:
-            raise ValueError("Each sequence must contain at least one dance")
+            raise ValueError('Each sequence must contain at least one dance')
         
         self.dances = dances
         self.order = int(order) if order else None
 
     def __str__(self):
-        order_str = "{0:d} | ".format(self.order) if self.order else ""
-        return order_str + ", ".join([str(dance) for dance in self.dances])
+        order_str = '{0:d} | '.format(self.order) if self.order else ''
+        return order_str + ', '.join([str(dance) for dance in self.dances])
 
     def isect_ct(self, sequence):
         return len(self.dances[-1].dancers.intersection( \
@@ -38,8 +42,12 @@ class Program:
             self.add_seq(s)
 
     def __str__(self):
-        return "Program {0:d}:\n".format(self.number) + \
-                "\n".join([str(d) for d in self.dances()])+"\n"
+        return 'Program {0:d}:\n'.format(self.number) + \
+                '\n'.join([str(d) for d in self.dances()])+'\n'
+
+    def pretty(self):
+        return 'Program {0:d}:\n'.format(self.number) + \
+                '\n'.join([d.pretty() for d in self.dances()])+'\n'
 
     def set_number(self, number):
         self.number = number
@@ -95,7 +103,7 @@ def solve(cur_prog, seqs):
 #--------------------
 def make_dance(dancers,ct,n):
     random.shuffle(dancers)
-    return Dance(dancers[:ct], "Dance {0:d}".format(n))
+    return Dance(dancers[:ct], 'Dance {0:d}'.format(n))
 
 def make_dance_seq(dancers, cts, start_num, order=None):
     dances = []
@@ -111,7 +119,7 @@ def make_dance_seq(dancers, cts, start_num, order=None):
     return DanceSequence(dances, order=order)
 
 def make_test_data():
-    dancers = list("abcdefghigklmnopqr")
+    dancers = list('abcdefghigklmnopqr')
     seqs = []
     seqs.append(make_dance_seq(dancers, [3,5,2], 1, order=1))
     seqs.append(make_dance_seq(dancers, [4,7], 4, order=10))
@@ -173,16 +181,16 @@ def parse_args():
 # Output Generation
 #-------------------
 def output(programs, seqs, include_all, max_overlaps):
-    output = "Maximum allowed overlaps: {0:d}\n".format(max_overlaps)
-    output += "Input Sequences \n"
+    output = 'Maximum allowed overlaps: {0:d}\n'.format(max_overlaps)
+    output += 'Input Sequences \n'
     for s in seqs:
-        output += "{0}\n".format(s)
+        output += '{0}\n'.format(s)
 
     results = [p for p in programs if p.respects_ordering()]
-    output += "\n{0:d} program(s) found.\n".format(len(results))
+    output += '\n{0:d} program(s) found.\n'.format(len(results))
     for i, p in enumerate(results):
         p.set_number(i+1)
-        output += "{}\n".format(p)
+        output += '{}\n'.format(p.pretty())
     if include_all:
         extras = [p for p in programs if not p.respects_ordering()]
         output += '\n{0:d} additional program(s) which would ' \
@@ -191,7 +199,7 @@ def output(programs, seqs, include_all, max_overlaps):
                 .format(len(extras))
         for i, p in enumerate(extras):
             p.set_number(i+1)
-            output += "{}\n".format(p)
+            output += '{}\n'.format(p.pretty())
 
     print(output)
     with open('output.txt','w') as f:
