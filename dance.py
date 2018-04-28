@@ -62,7 +62,7 @@ class Program:
             self.overlaps += self.isect_ct(seq)
             self.dance_seqs.append(seq)
         else:
-            raise ArgumentError("Can't add sequence to program " \
+            raise ValueError("Can't add sequence to program " \
                     + "-- too many overlaps.")
 
     def isect_ct(self, seq):
@@ -145,7 +145,7 @@ def parse_dance_sequence(line):
         order, dances = seqinfo
     elif len(seqinfo) == 1:
         order, dances = None, seqinfo[0]
-    else: raise Exception("Can't parse dance sequence")
+    else: raise ValueError("Can't parse dance sequence")
     dances = dances.strip().split(';')
     seq = []
     for d in dances:
@@ -158,7 +158,7 @@ def parse_dance(d):
         title, dancers = dinfo
     elif len(dinfo) == 1:
         title, dancers = None, dinfo[0]
-    else: raise Exception("Can't parse dance")
+    else: raise ValueError("Can't parse dance")
     return Dance(dancers.strip().split(), title)
 
 #--------------------------------
@@ -193,9 +193,9 @@ def output(programs, seqs, include_all, max_overlaps):
         output += '{}\n'.format(p.pretty())
     if include_all:
         extras = [p for p in programs if not p.respects_ordering()]
-        output += '\n{0:d} additional program(s) which would ' \
+        output += ('\n{0:d} additional program(s) which would ' \
         + 'be valid if the special ordering of some sequences were ' \
-        + 'allowed to change.\n' \
+        + 'allowed to change.\n') \
                 .format(len(extras))
         for i, p in enumerate(extras):
             p.set_number(i+1)
