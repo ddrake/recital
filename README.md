@@ -26,17 +26,20 @@ optional arguments:
               special ordering
 ```
 ### Installation
+```
 git clone git@github.com:ddrake/recital.git 
+```
 
 ### Examples 
 
 #### Test with random data
+```
 cd recital
-
 ./dance.py
+```
 
 #### Test with sample input file
+```
 cd recital
-
 ./dance.py -f sequences.txt -n1
-
+```
