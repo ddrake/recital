@@ -27,7 +27,8 @@ class DanceSequence:
         return order_str + ", ".join([str(dance) for dance in self.dances])
 
     def isect_ct(self, sequence):
-        return len(self.dances[-1].dancers.intersection(sequence.dances[0].dancers))
+        return len(self.dances[-1].dancers.intersection( \
+            sequence.dances[0].dancers))
 
 class Program:
     def __init__(self, dance_seqs = []):
@@ -53,7 +54,8 @@ class Program:
             self.overlaps += self.isect_ct(seq)
             self.dance_seqs.append(seq)
         else:
-            raise ArgumentError("Can't add sequence to program -- too many overlaps.")
+            raise ArgumentError("Can't add sequence to program " \
+                    + "-- too many overlaps.")
 
     def isect_ct(self, seq):
         return 0 if not self.dance_seqs else self.dance_seqs[-1].isect_ct(seq)
@@ -69,10 +71,12 @@ class Program:
 # Solver
 #--------
 # Generate a list of all possible programs by taking a partially 
-# complete Program and a list of dance sequences that must to be added.
-# If the current Program is complete, return it in a list.
-# Otherwise call solve() recursively for any valid Programs
-# formed by appending one of the seqs to a copy of the current Program
+# complete Program and a list of the remaining dance sequences to be added.
+# If the current Program is complete (i.e. no more sequences to add), 
+# return it wrapped in a list.
+# Otherwise, call solve() recursively for any valid Programs
+# formed by appending one of the sequences to a copy of the current Program,
+# then merge these results into a list of programs and return this list.
 def solve(cur_prog, seqs):
     programs = []
     if not seqs:
@@ -153,11 +157,15 @@ def parse_dance(d):
 # Command line argument parsing
 #--------------------------------
 def parse_args():
-    parser = argparse.ArgumentParser(description='Compute possible programs for a recital.')
-    parser.add_argument('-f', help='Sequence file path.  If no file is set, random data will be used.')
-    parser.add_argument('-n', type=int, default=0, help='Number of allowed overlaps')
+    parser = argparse.ArgumentParser( \
+            description='Compute possible programs for a recital.')
+    parser.add_argument('-f', help='Sequence file path. ' \ 
+            + 'If no file is set, random data will be used.')
+    parser.add_argument('-n', type=int, default=0, 
+            help='Number of allowed overlaps')
     parser.add_argument('-a', action='store_true', \
-            help="After listing programs, show programs which are valid except for special ordering")
+            help='After listing programs, show programs which are ' \ 
+            + 'valid except for special ordering')
     ns = parser.parse_args(sys.argv[1:])
     return ns.a, ns.f, ns.n
 
@@ -177,7 +185,9 @@ def output(programs, seqs, include_all, max_overlaps):
         output += "{}\n".format(p)
     if include_all:
         extras = [p for p in programs if not p.respects_ordering()]
-        output += "\n{0:d} additional program(s) if required order of some sequences may change.\n" \
+        output += '\n{0:d} additional program(s) which would ' \
+        + 'be valid if the special ordering of some sequences were ' \
+        + 'allowed to change.\n' \
                 .format(len(extras))
         for i, p in enumerate(extras):
             p.set_number(i+1)
