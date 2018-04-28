@@ -3,6 +3,9 @@ import random
 import sys
 import argparse
 
+#-------------------
+# Class Definitions
+#-------------------
 class Dance:
     def __init__(self, dancers, title="Untitled"):
         self.dancers = dancers # a set of dancer names
@@ -17,45 +20,72 @@ class DanceSequence:
             raise ValueError("Each sequence must contain at least one dance")
         
         self.dances = dances
-        self.order = order
+        self.order = int(order) if order else None
 
     def __str__(self):
-        return ", ".join([str(dance) for dance in self.dances])
+        order_str = "{0:d} | ".format(self.order) if self.order else ""
+        return order_str + ", ".join([str(dance) for dance in self.dances])
 
-    def isdisjoint(self, sequence):
-        return self.dances[-1].dancers.isdisjoint(sequence.dances[0].dancers)
+    def isect_ct(self, sequence):
+        return len(self.dances[-1].dancers.intersection(sequence.dances[0].dancers))
 
-# a program is a valid list of DanceSequences
 class Program:
-    def __init__(self, dance_seqs):
-        for i in range(len(dance_seqs)-1):
-            if not dance_seqs[i].isdisjoint(dance_seqs[i+1]):
-                raise ValueError("Can't construct program - dancers must rest.")
-        self.dance_seqs = dance_seqs
-    
+    def __init__(self, dance_seqs = []):
+        self.dance_seqs = []
+        self.overlaps = 0
+        for s in dance_seqs:
+            self.add_seq(s)
+
     def __str__(self):
         return "Program:\n"+"\n".join([str(d) for d in self.dances()])+"\n"
+
+    def can_add_seq(self, seq):
+        global max_overlaps
+        return self.isect_ct(seq) + self.overlaps <= max_overlaps
+
+    def add_seq(self, seq):
+        global max_overlaps
+        if self.can_add_seq(seq):
+            self.overlaps += self.isect_ct(seq)
+            self.dance_seqs.append(seq)
+            assert self.overlaps <= max_overlaps, "too many overlaps"
+        else:
+            raise ArgumentError("Can't add sequence to program")
+
+    def isect_ct(self, seq):
+        return 0 if not self.dance_seqs else self.dance_seqs[-1].isect_ct(seq)
 
     def dances(self):
         return [dance for seq in self.dance_seqs for dance in seq.dances]
 
-# Recursively generate a list of all possible programs from the given data
-# take a list of dance sequences (a program in process) 
-# and a list of dance sequences that need to be added
-# try to append.
-def step(cur_prog, seqs):
+    def respects_ordering(self):
+        return all(not seq.order or seq.order == self.dance_seqs.index(seq)+1 for seq in self.dance_seqs)
+
+#--------
+# Solver
+#--------
+# Generate a list of all possible programs by taking a partially 
+# complete Program and a list of dance sequences that must to be added.
+# If the current Program is complete, return it in a list.
+# Otherwise call solve() recursively for any valid Programs
+# formed by appending one of the seqs to a copy of the current Program
+def solve(cur_prog, seqs):
     programs = []
     if not seqs:
-        return [Program(cur_prog)]
+        return [cur_prog]
     for s in seqs:
-        if not cur_prog or cur_prog[-1].isdisjoint(s):
-            cp = cur_prog[:]
-            cp.append(s)
+        if cur_prog.can_add_seq(s):
+            new_prog = Program(cur_prog.dance_seqs[:])
+            assert new_prog.overlaps == cur_prog.overlaps, "overlaps changed"
+            new_prog.add_seq(s)
             rest = seqs[:]
             rest.remove(s)
-            programs += step(cp,rest)
+            programs += solve(new_prog,rest)
     return programs
 
+#--------------------
+# Generate Test Data
+#--------------------
 def make_test_data():
     dancers = ['a','b','c','d','e','f','g','h','i','j','k','l','m','n','o','p']
     dances = []
@@ -88,59 +118,92 @@ def make_test_data():
 
     return seqs
 
-def parse_line(line):
+#-------------------
+# Input file parsing
+#-------------------
+def parse_contents(contents):
+    lines = contents.strip().split('\n')
+    lines = [line for line in lines if line and line[0] != '#']
+    seqs = []
+    for line in lines:
+        seq, order = parse_dance_sequence(line)
+        seqs.append(DanceSequence(seq, order=order))
+    return seqs
+
+def parse_dance_sequence(line):
     seqinfo = line.strip().split('|')
     if len(seqinfo) == 2:
         order, dances = seqinfo
     elif len(seqinfo) == 1:
         order, dances = None, seqinfo[0]
-    else: raise Exception("Can't parse line")
+    else: raise Exception("Can't parse dance sequence")
+    dances = dances.strip().split(';')
+    seq = []
+    for d in dances:
+        seq.append(parse_dance(d))
+    return seq, order
 
-# Program starts here
-parser = argparse.ArgumentParser(description='Compute some possible programs for a recital.')
-parser.add_argument('-f', help='sequence file path')
-parser.add_argument('-n', type=int, default=0, help='number of allowed overlaps')
-parser.add_argument('-a', action='store_true', \
+def parse_dance(d):
+    dinfo = d.strip().split(':')
+    if len(dinfo) == 2:
+        title, dancers = dinfo
+    elif len(dinfo) == 1:
+        title, dancers = None, dinfo[0]
+    else: raise Exception("Can't parse dance")
+    return Dance(set(dancers.strip().split()), title)
+
+
+#--------------------------------
+# Command line argument parsing
+#--------------------------------
+def parse_args():
+    parser = argparse.ArgumentParser(description='Compute possible programs for a recital.')
+    parser.add_argument('-f', help='sequence file path')
+    parser.add_argument('-n', type=int, default=0, help='number of allowed overlaps')
+    parser.add_argument('-a', action='store_true', \
         help="show all programs, even those which don't satisfy ordering")
-ns = parser.parse_args(sys.argv)
-include_all = ns.a
-infile      = ns.f
-overlaps    = ns.n
+    ns = parser.parse_args(sys.argv[1:])
+    return ns.a, ns.f, ns.n
 
+
+#-------------------
+# Output Generation
+#-------------------
+def output(programs, seqs, include_all):
+    output = ""
+    for s in seqs:
+        output += "{0}\n".format(s)
+
+    results = [p for p in programs if p.respects_ordering()]
+    output += "\n{0:d} program(s) found.\n".format(len(results))
+    for p in results:
+        output += "{}\n".format(p)
+    if include_all:
+        extras = [p for p in programs if not p.respects_ordering()]
+        output += "\n{0:d} additional program(s) if required order of some sequences may change.\n" \
+                .format(len(extras))
+        for p in extras:
+            output += "{}\n".format(p)
+
+    print(output)
+    with open('output.txt','w') as f:
+        f.write(output)
+
+#--------------
+# Main Program
+#--------------
+include_all, infile, max_overlaps = parse_args()
+print("max_overlaps: ", max_overlaps)
 if infile:
-    try:
-        lines = contents.strip().split('\n')
-        lines = [line for line in lines if line and line[0] != '#']
-        seqs = []
-        for line in lines:
-            parse_line(line)
-            order, dances = parse_line(line)
-            dances = dances.strip().split(';')
-            seq = []
-            for d in dances:
-                dinfo = d.strip().split(':')
-                if len(dinfo) == 2:
-                    title, dancers = dinfo
-                elif len(dinfo) == 1:
-                    title, dancers = None, dinfo[0]
-                else: raise Exception("Can't parse dance")
-
-                dance = Dance(set(dancers.strip().split()), title)
-                seq.append(dance)
-
-            seqs.append(DanceSequence(seq, order=order))
-
-    except Exception as ex:
-        print(ex)
-        sys.exit(2)
+    with open(infile,'r') as f:
+        contents = f.read()
+    seqs = parse_contents(contents)
 else:
     seqs = make_test_data()
 
 for s in seqs:
     print(s)
 
-programs = step([],seqs)
-print("\n{0:d} program(s) found.".format(len(programs)))
-for p in programs:
-    print(p)
+programs = solve(Program(),seqs)
+output(programs, seqs, include_all)
 
