@@ -169,8 +169,9 @@ def parse_args():
 #-------------------
 # Output Generation
 #-------------------
-def output(programs, seqs, include_all):
-    output = ""
+def output(programs, seqs, include_all, max_overlaps):
+    output = "Maximum allowed overlaps: {0:d}\n".format(max_overlaps)
+    output += "Input Sequences \n"
     for s in seqs:
         output += "{0}\n".format(s)
 
@@ -193,7 +194,6 @@ def output(programs, seqs, include_all):
 # Main Program
 #--------------
 include_all, infile, max_overlaps = parse_args()
-print("max_overlaps: ", max_overlaps)
 if infile:
     with open(infile,'r') as f:
         contents = f.read()
@@ -201,9 +201,6 @@ if infile:
 else:
     seqs = make_test_data()
 
-for s in seqs:
-    print(s)
-
 programs = solve(Program(),seqs)
-output(programs, seqs, include_all)
+output(programs, seqs, include_all, max_overlaps)
 
