@@ -8,7 +8,7 @@ import argparse
 #-------------------
 class Dance:
     def __init__(self, dancers, title="Untitled"):
-        self.dancers = dancers # a set of dancer names
+        self.dancers = set(dancers) # dancers' names
         self.title = title
 
     def __str__(self):
@@ -37,7 +37,11 @@ class Program:
             self.add_seq(s)
 
     def __str__(self):
-        return "Program:\n"+"\n".join([str(d) for d in self.dances()])+"\n"
+        return "Program {0:d}:\n".format(self.number) + \
+                "\n".join([str(d) for d in self.dances()])+"\n"
+
+    def set_number(self, number):
+        self.number = number
 
     def can_add_seq(self, seq):
         global max_overlaps
@@ -48,7 +52,6 @@ class Program:
         if self.can_add_seq(seq):
             self.overlaps += self.isect_ct(seq)
             self.dance_seqs.append(seq)
-            assert self.overlaps <= max_overlaps, "too many overlaps"
         else:
             raise ArgumentError("Can't add sequence to program")
 
@@ -59,7 +62,8 @@ class Program:
         return [dance for seq in self.dance_seqs for dance in seq.dances]
 
     def respects_ordering(self):
-        return all(not seq.order or seq.order == self.dance_seqs.index(seq)+1 for seq in self.dance_seqs)
+        return all(not seq.order or seq.order == self.dance_seqs.index(seq)+1 \
+                for seq in self.dance_seqs)
 
 #--------
 # Solver
@@ -86,36 +90,30 @@ def solve(cur_prog, seqs):
 #--------------------
 # Generate Test Data
 #--------------------
-def make_test_data():
-    dancers = ['a','b','c','d','e','f','g','h','i','j','k','l','m','n','o','p']
+def make_dance(dancers,ct,n):
+    random.shuffle(dancers)
+    return Dance(dancers[:ct], "Dance {0:d}".format(n))
+
+def make_dance_seq(dancers, cts, start_num, order=None):
     dances = []
-    random.shuffle(dancers)
-    dances.append(Dance(set(dancers[:3]),"Dance 1"))
-    random.shuffle(dancers)
-    dances.append(Dance(set(dancers[:5]),"Dance 2"))
-    random.shuffle(dancers)
-    dances.append(Dance(set(dancers[:2]),"Dance 3"))
-    random.shuffle(dancers)
-    dances.append(Dance(set(dancers[:4]),"Dance 4"))
-    random.shuffle(dancers)
-    dances.append(Dance(set(dancers[:7]),"Dance 5"))
-    random.shuffle(dancers)
-    dances.append(Dance(set(dancers[:3]),"Dance 6"))
-    random.shuffle(dancers)
-    dances.append(Dance(set(dancers[:1]),"Dance 7"))
-    random.shuffle(dancers)
-    dances.append(Dance(set(dancers[:5]),"Dance 8"))
-    random.shuffle(dancers)
-    dances.append(Dance(set(dancers[:6]),"Dance 9"))
-    random.shuffle(dancers)
-    dances.append(Dance(set(dancers[:5]),"Dance 10"))
+    dancerset = set()
+    for i in range(len(cts)):
+        distinct = False
+        while not distinct:
+            dance = make_dance(dancers, cts[i], start_num + i)
+            if dancerset.isdisjoint(dance.dancers):
+                dancerset = dancerset.union(dance.dancers)
+                distinct = True
+        dances.append(dance)
+    return DanceSequence(dances, order=order)
 
+def make_test_data():
+    dancers = list("abcdefghigklmnopqr")
     seqs = []
-    seqs.append(DanceSequence([dances[0],dances[1],dances[2]]))
-    seqs.append(DanceSequence([dances[3],dances[4]]))
-    for i in range(5,len(dances)):
-        seqs.append(DanceSequence([dances[i]]))
-
+    seqs.append(make_dance_seq(dancers, [3,5,2], 1, order=1))
+    seqs.append(make_dance_seq(dancers, [4,7], 4, order=10))
+    for i in range(8):
+        seqs.append(make_dance_seq(dancers,[4],i+6))
     return seqs
 
 #-------------------
@@ -150,7 +148,7 @@ def parse_dance(d):
     elif len(dinfo) == 1:
         title, dancers = None, dinfo[0]
     else: raise Exception("Can't parse dance")
-    return Dance(set(dancers.strip().split()), title)
+    return Dance(dancers.strip().split(), title)
 
 
 #--------------------------------
@@ -177,13 +175,15 @@ def output(programs, seqs, include_all, max_overlaps):
 
     results = [p for p in programs if p.respects_ordering()]
     output += "\n{0:d} program(s) found.\n".format(len(results))
-    for p in results:
+    for i, p in enumerate(results):
+        p.set_number(i+1)
         output += "{}\n".format(p)
     if include_all:
         extras = [p for p in programs if not p.respects_ordering()]
         output += "\n{0:d} additional program(s) if required order of some sequences may change.\n" \
                 .format(len(extras))
-        for p in extras:
+        for i, p in enumerate(extras):
+            p.set_number(i+1)
             output += "{}\n".format(p)
 
     print(output)
