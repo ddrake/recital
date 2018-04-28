@@ -158,10 +158,10 @@ def parse_dance(d):
 #--------------------------------
 def parse_args():
     parser = argparse.ArgumentParser(description='Compute possible programs for a recital.')
-    parser.add_argument('-f', help='sequence file path')
-    parser.add_argument('-n', type=int, default=0, help='number of allowed overlaps')
+    parser.add_argument('-f', help='Sequence file path.  If no file is set, random data will be used.')
+    parser.add_argument('-n', type=int, default=0, help='Number of allowed overlaps')
     parser.add_argument('-a', action='store_true', \
-        help="show all programs, even those which don't satisfy ordering")
+            help="After listing programs, show programs which are valid except for ordering")
     ns = parser.parse_args(sys.argv[1:])
     return ns.a, ns.f, ns.n
 
