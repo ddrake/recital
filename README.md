@@ -30,9 +30,11 @@ git clone git@github.com:ddrake/recital.git
 
 #### Test with random data
 cd recital
+
 ./dance.py
 
 #### Test with sample input file
 cd recital
+
 ./dance.py -f sequences.txt -n1
 
