@@ -53,7 +53,7 @@ class Program:
             self.overlaps += self.isect_ct(seq)
             self.dance_seqs.append(seq)
         else:
-            raise ArgumentError("Can't add sequence to program")
+            raise ArgumentError("Can't add sequence to program -- too many overlaps.")
 
     def isect_ct(self, seq):
         return 0 if not self.dance_seqs else self.dance_seqs[-1].isect_ct(seq)
@@ -150,7 +150,6 @@ def parse_dance(d):
     else: raise Exception("Can't parse dance")
     return Dance(dancers.strip().split(), title)
 
-
 #--------------------------------
 # Command line argument parsing
 #--------------------------------
@@ -162,7 +161,6 @@ def parse_args():
             help="After listing programs, show programs which are valid except for ordering")
     ns = parser.parse_args(sys.argv[1:])
     return ns.a, ns.f, ns.n
-
 
 #-------------------
 # Output Generation
