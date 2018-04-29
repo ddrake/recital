@@ -41,5 +41,13 @@ def test_simple_overlap_case():
     # should be two solutions with no overlap
     # plus 10 more solutions with one overlap, e.g. (ab cd de bc)
     assert len(ps) == 12
+    Program.max_overlaps = 2
+    ps = solve(Program([]),danceSeqs)
+    # should get all permutations except ab bc cd de and the reverse
+    assert len(ps) == 22
+    Program.max_overlaps = 3
+    ps = solve(Program([]),danceSeqs)
+    # should get all 24 permutations
+    assert len(ps) == 24
 
 
