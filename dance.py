@@ -204,6 +204,8 @@ def output(programs, seqs, include_all):
     with open('output.txt','w') as f:
         f.write(output)
 
+# Set a default value
+Program.max_overlaps = 0
 #--------------
 # Main Program
 #--------------
