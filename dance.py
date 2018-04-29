@@ -38,6 +38,7 @@ class Program:
     def __init__(self, dance_seqs = []):
         self.dance_seqs = []
         self.overlaps = 0
+        self.number = 0
         for s in dance_seqs:
             self.add_seq(s)
 
@@ -53,11 +54,9 @@ class Program:
         self.number = number
 
     def can_add_seq(self, seq):
-        global max_overlaps
-        return self.isect_ct(seq) + self.overlaps <= max_overlaps
+        return self.isect_ct(seq) + self.overlaps <= Program.max_overlaps
 
     def add_seq(self, seq):
-        global max_overlaps
         if self.can_add_seq(seq):
             self.overlaps += self.isect_ct(seq)
             self.dance_seqs.append(seq)
@@ -180,8 +179,8 @@ def parse_args():
 #-------------------
 # Output Generation
 #-------------------
-def output(programs, seqs, include_all, max_overlaps):
-    output = 'Maximum allowed overlaps: {0:d}\n'.format(max_overlaps)
+def output(programs, seqs, include_all):
+    output = 'Maximum allowed overlaps: {0:d}\n'.format(Program.max_overlaps)
     output += 'Input Sequences \n'
     for s in seqs:
         output += '{0}\n'.format(s)
@@ -216,6 +215,7 @@ if infile:
 else:
     seqs = make_test_data()
 
+Program.max_overlaps = max_overlaps
 programs = solve(Program(),seqs)
-output(programs, seqs, include_all, max_overlaps)
+output(programs, seqs, include_all)
 
