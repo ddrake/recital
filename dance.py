@@ -106,13 +106,13 @@ def make_dance(dancers,ct,n):
 
 def make_disjoint_dance_seq(dancers, cts, start_num, order=None):
     dances = []
-    dancerset = set()
+    dancer_set = set()
     for i in range(len(cts)):
         disjoint = False
         while not disjoint:
             dance = make_dance(dancers, cts[i], start_num + i)
-            if dancerset.isdisjoint(dance.dancers):
-                dancerset = dancerset.union(dance.dancers)
+            if dancer_set.isdisjoint(dance.dancers):
+                dancer_set = dancer_set.union(dance.dancers)
                 disjoint = True
         dances.append(dance)
     return DanceSequence(dances, order=order)
