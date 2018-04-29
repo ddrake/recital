@@ -179,19 +179,25 @@ def parse_args():
 #-------------------
 # Output Generation
 #-------------------
+def order_respecting_programs(programs):
+    return [p for p in programs if p.respects_ordering()]
+
+def non_order_respecting_programs(programs):
+    return [p for p in programs if not p.respects_ordering()]
+
 def output(programs, seqs, include_all):
     output = 'Maximum allowed overlaps: {0:d}\n'.format(Program.max_overlaps)
     output += 'Input Sequences \n'
     for s in seqs:
         output += '{0}\n'.format(s)
 
-    results = [p for p in programs if p.respects_ordering()]
+    results = order_respecting_programs(programs)
     output += '\n{0:d} program(s) found.\n'.format(len(results))
     for i, p in enumerate(results):
         p.set_number(i+1)
         output += '{}\n'.format(p.pretty())
     if include_all:
-        extras = [p for p in programs if not p.respects_ordering()]
+        extras = non_order_respecting_programs(programs)
         output += ('\n{0:d} additional program(s) which would ' \
         + 'be valid if the special ordering of some sequences were ' \
         + 'allowed to change.\n') \
