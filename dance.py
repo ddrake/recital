@@ -104,26 +104,26 @@ def make_dance(dancers,ct,n):
     random.shuffle(dancers)
     return Dance(dancers[:ct], 'Dance {0:d}'.format(n))
 
-def make_dance_seq(dancers, cts, start_num, order=None):
+def make_disjoint_dance_seq(dancers, cts, start_num, order=None):
     dances = []
     dancerset = set()
     for i in range(len(cts)):
-        distinct = False
-        while not distinct:
+        disjoint = False
+        while not disjoint:
             dance = make_dance(dancers, cts[i], start_num + i)
             if dancerset.isdisjoint(dance.dancers):
                 dancerset = dancerset.union(dance.dancers)
-                distinct = True
+                disjoint = True
         dances.append(dance)
     return DanceSequence(dances, order=order)
 
 def make_test_data():
     dancers = list('abcdefghigklmnopqr')
     seqs = []
-    seqs.append(make_dance_seq(dancers, [3,5,2], 1, order=1))
-    seqs.append(make_dance_seq(dancers, [4,7], 4, order=10))
+    seqs.append(make_disjoint_dance_seq(dancers, [3,5,2], 1, order=1))
+    seqs.append(make_disjoint_dance_seq(dancers, [4,7], 4, order=10))
     for i in range(8):
-        seqs.append(make_dance_seq(dancers,[4],i+6))
+        seqs.append(make_disjoint_dance_seq(dancers,[4],i+6))
     return seqs
 
 #-------------------
