@@ -207,15 +207,16 @@ def output(programs, seqs, include_all):
 #--------------
 # Main Program
 #--------------
-include_all, infile, max_overlaps = parse_args()
-if infile:
-    with open(infile,'r') as f:
-        contents = f.read()
-    seqs = parse_contents(contents)
-else:
-    seqs = make_test_data()
+if __name__ == '__main__':
+    include_all, infile, max_overlaps = parse_args()
+    if infile:
+        with open(infile,'r') as f:
+            contents = f.read()
+        seqs = parse_contents(contents)
+    else:
+        seqs = make_test_data()
 
-Program.max_overlaps = max_overlaps
-programs = solve(Program(),seqs)
-output(programs, seqs, include_all)
+    Program.max_overlaps = max_overlaps
+    programs = solve(Program(),seqs)
+    output(programs, seqs, include_all)
 

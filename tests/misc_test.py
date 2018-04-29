@@ -5,6 +5,7 @@ from dance import *
 # if we have 4 single dance sequences, each with one unique dancer
 # we'd better get 24 solutions
 def test_fully_disjoint_case():
+    Program.max_overlaps = 0
     dancers = list("abcd")
     dances = [Dance([d]) for d in dancers]
     danceSeqs = [DanceSequence([d]) for d in dances]
@@ -12,6 +13,7 @@ def test_fully_disjoint_case():
     assert len(ps) == 24
 
 def test_simple_ordered_case():
+    Program.max_overlaps = 0
     dancers = list("abcdef")
     dances = [Dance(dancers[i:i+2]) for i in range(5)]
     danceSeqs = [DanceSequence([d]) for d in dances]
@@ -26,6 +28,7 @@ def test_simple_ordered_case():
     assert p.dance_seqs[2].dances[0].dancers == set(['e','f'])
     assert p.dance_seqs[3].dances[0].dancers == set(['b','c'])
     assert p.dance_seqs[4].dances[0].dancers == set(['d','e'])
+    assert Program.max_overlaps == 0
 
 def test_simple_overlap_case():
     dancers = list("abcde")
