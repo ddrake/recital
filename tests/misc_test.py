@@ -62,3 +62,13 @@ def test_overlap_with_order_case():
     # should be one solution: ab cd bc de
     assert len(ps) == 1
  
+def test_intermission_affect_on_overlap():
+    dancers = list("abcde")
+    dances = [Dance(dancers[i:i+2]) for i in range(4)]
+    danceSeqs = [DanceSequence([d]) for d in dances]
+    danceSeqs.insert(2, DanceSequence([Dance([])]))
+    Program.max_overlaps = 0
+    ps = solve(Program(),danceSeqs)
+    # with the intermission, we get 20 solutions instead of 2!
+    assert len(ps) == 20
+
