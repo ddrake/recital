@@ -84,17 +84,19 @@ class Program:
 # Otherwise, call solve() recursively for any valid Programs
 # formed by appending one of the sequences to a copy of the current Program,
 # then merge these results into a list of programs and return this list.
-def solve(cur_prog, seqs):
+def solve(cur_prog, seqs, level=1):
     programs = []
     if not seqs:
         return [cur_prog]
-    for s in seqs:
+    for i, s in enumerate(seqs):
         if cur_prog.can_add_seq(s):
             new_prog = Program(cur_prog.dance_seqs[:])
             new_prog.add_seq(s)
             rest = seqs[:]
             rest.remove(s)
-            programs += solve(new_prog,rest)
+            programs += solve(new_prog,rest, level=level+1)
+        if level == 1:
+            print("Checking sequence {0:d}...".format(i+1))
     return programs
 
 #--------------------
