@@ -186,14 +186,14 @@ def non_order_respecting_programs(programs):
     return [p for p in programs if not p.respects_ordering()]
 
 def echo_inputs(seqs):
-    output = 'maximum allowed overlaps: {0:d}\n'.format(program.max_overlaps)
+    output = 'maximum allowed overlaps: {0:d}\n'.format(Program.max_overlaps)
     output += 'input sequences \n'
     for s in seqs:
         output += '{0}\n'.format(s)
     print(output)
 
 def output(programs, seqs, include_all):
-    output = 'maximum allowed overlaps: {0:d}\n'.format(program.max_overlaps)
+    output = 'maximum allowed overlaps: {0:d}\n'.format(Program.max_overlaps)
     output += 'input sequences \n'
     for s in seqs:
         output += '{0}\n'.format(s)
