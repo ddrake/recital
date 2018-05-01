@@ -70,3 +70,32 @@ def test_intermission_affect_on_overlap():
     # with the intermission, we get 20 solutions instead of 2!
     assert len(ps) == 20
 
+# addition of ordering speeds things up quite a lot
+def test_bit_ordered_case():
+    dancers = list("abcdefghijklmnopqrstu")
+    dances = [Dance(dancers[i:i+2]) for i in range(20)]
+    danceSeqs = [DanceSequence([d]) for d in dances]
+    danceSeqs[0].order = 1
+    danceSeqs[1].before = 6
+    danceSeqs[2].before = 6
+    danceSeqs[3].order = 5
+    danceSeqs[4].before = 6
+    danceSeqs[5].order = 6
+    danceSeqs[6].before = 11
+    danceSeqs[7].before = 11
+    danceSeqs[8].order = 10
+    danceSeqs[9].before = 11
+    danceSeqs[10].order = 11
+    danceSeqs[11].after = 10
+    danceSeqs[12].after = 10
+    danceSeqs[13].order = 15
+    danceSeqs[14].after = 10
+    danceSeqs[15].order = 16
+    danceSeqs[16].after = 15
+    danceSeqs[17].after = 15
+    danceSeqs[18].order = 20
+    danceSeqs[19].after = 15
+
+    ps = solve(Program(),danceSeqs)
+    assert len(ps) == 1
+ 

@@ -2,7 +2,7 @@
 import random
 import sys
 import argparse
-
+import re
 #-------------------
 # Class Definitions
 #-------------------
@@ -29,7 +29,14 @@ class DanceSequence:
         self.after = int(after) if after else None
 
     def __str__(self):
-        order_str = '{0:d} | '.format(self.order) if self.order else ''
+        order_str = ""
+        if self.order:
+            order_str += '{0:d} '.format(self.order)
+        if self.after:
+            order_str += '>{0:d} '.format(self.after)
+        if self.before:
+            order_str += '<{0:d} '.format(self.before)
+        order_str = order_str + '| ' if order_str else ''
         return order_str + ', '.join([str(dance) for dance in self.dances])
 
     def isect_ct(self, sequence):
@@ -146,22 +153,38 @@ def parse_contents(contents):
     lines = [line for line in lines if line and line[0] != '#']
     seqs = []
     for line in lines:
-        seq, order = parse_dance_sequence(line)
-        seqs.append(DanceSequence(seq, order=order))
+        seq, order, before, after = parse_dance_sequence(line)
+        seqs.append(DanceSequence(seq, order=order, before=before, after=after))
     return seqs
 
 def parse_dance_sequence(line):
     seqinfo = line.strip().split('|')
     if len(seqinfo) == 2:
-        order, dances = seqinfo
+        orderinfo, dances = seqinfo
+        print(orderinfo)
+        order, before, after = parse_order_info(orderinfo)
+        print(order, before, after)
     elif len(seqinfo) == 1:
-        order, dances = None, seqinfo[0]
+        order, before, after, dances = None, None, None, seqinfo[0]
     else: raise ValueError("Can't parse dance sequence")
     dances = dances.strip().split(';')
     seq = []
     for d in dances:
         seq.append(parse_dance(d))
-    return seq, order
+    return seq, order, before, after
+
+def parse_order_info(orderinfo):
+    porder = re.compile('(?<![<>])(\d+)')
+    pbefore = re.compile('\<(\d+)')
+    pafter = re.compile('\>(\d+)')
+    after, before, order = None, None, None
+    s = porder.search(orderinfo)
+    if s: order = s.group(1)
+    s = pbefore.search(orderinfo)
+    if s: before = s.group(1)
+    s = pafter.search(orderinfo)
+    if s: after = s.group(1)
+    return order, before, after
 
 def parse_dance(d):
     dinfo = d.strip().split(':')
