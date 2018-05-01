@@ -19,12 +19,14 @@ class Dance:
                 .join(sorted(list(self.dancers))))
 
 class DanceSequence:
-    def __init__(self, dances=None, order=None):
+    def __init__(self, dances=None, order=None, before=None, after=None):
         if not dances:
             raise ValueError('Each sequence must contain at least one dance')
         
         self.dances = dances
         self.order = int(order) if order else None
+        self.before = int(before) if before else None
+        self.after = int(after) if after else None
 
     def __str__(self):
         order_str = '{0:d} | '.format(self.order) if self.order else ''
@@ -54,6 +56,7 @@ class Program:
         self.number = number
 
     def can_add_seq(self, seq):
+        print("in can add with self.isect_ct(seq)={0:d}, overlaps={1:d}, max={2:d}".format(self.isect_ct(seq), self.overlaps, Program.max_overlaps))
         return self.isect_ct(seq) + self.overlaps <= Program.max_overlaps
 
     def add_seq(self, seq):
@@ -70,9 +73,13 @@ class Program:
     def dances(self):
         return [dance for seq in self.dance_seqs for dance in seq.dances]
 
-    def respects_ordering(self):
-        return all(not seq.order or seq.order == self.dance_seqs.index(seq)+1 \
-                for seq in self.dance_seqs)
+    def allowed(seqs, position):
+        if any(s.order == position for s in seqs):
+            return [s for s in seqs if s.order == position]
+        return [s for s in seqs if \
+                (not s.order or s.order == position) and
+                (not s.before or s.before > position) and 
+                (not s.after or s.after < position)]
 
 #--------
 # Solver
@@ -86,17 +93,20 @@ class Program:
 # then merge these results into a list of programs and return this list.
 def solve(cur_prog, seqs, level=1):
     programs = []
+    position = len(cur_prog.dance_seqs) + 1
     if not seqs:
         return [cur_prog]
-    for i, s in enumerate(seqs):
+    allowed = Program.allowed(seqs, position)
+    print("position is ", position, ", ", len(allowed), " allowed")
+    for i, s in enumerate(allowed):
+        if level == 1:
+            print("Checking sequence {0:d}...".format(i+1))
         if cur_prog.can_add_seq(s):
             new_prog = Program(cur_prog.dance_seqs[:])
             new_prog.add_seq(s)
             rest = seqs[:]
             rest.remove(s)
             programs += solve(new_prog,rest, level=level+1)
-        if level == 1:
-            print("Checking sequence {0:d}...".format(i+1))
     return programs
 
 #--------------------
@@ -172,21 +182,12 @@ def parse_args():
             + 'If no file is set, random data will be used.')
     parser.add_argument('-n', type=int, default=0, 
             help='Number of allowed overlaps')
-    parser.add_argument('-a', action='store_true', \
-            help='After listing programs, show programs which are ' \
-            + 'valid except for special ordering')
     ns = parser.parse_args(sys.argv[1:])
-    return ns.a, ns.f, ns.n
+    return ns.f, ns.n
 
 #-------------------
 # Output Generation
 #-------------------
-def order_respecting_programs(programs):
-    return [p for p in programs if p.respects_ordering()]
-
-def non_order_respecting_programs(programs):
-    return [p for p in programs if not p.respects_ordering()]
-
 def echo_inputs(seqs):
     output = 'maximum allowed overlaps: {0:d}\n'.format(Program.max_overlaps)
     output += 'input sequences \n'
@@ -194,27 +195,17 @@ def echo_inputs(seqs):
         output += '{0}\n'.format(s)
     print(output)
 
-def output(programs, seqs, include_all):
+def output(programs, seqs):
     output = 'maximum allowed overlaps: {0:d}\n'.format(Program.max_overlaps)
     output += 'input sequences \n'
     for s in seqs:
         output += '{0}\n'.format(s)
 
-    results = order_respecting_programs(programs)
+    results = programs
     output += '\n{0:d} program(s) found.\n'.format(len(results))
     for i, p in enumerate(results):
         p.set_number(i+1)
         output += '{}\n'.format(p.pretty())
-    if include_all:
-        extras = non_order_respecting_programs(programs)
-        output += ('\n{0:d} additional program(s) which would ' \
-        + 'be valid if the special ordering of some sequences were ' \
-        + 'allowed to change.\n') \
-                .format(len(extras))
-        for i, p in enumerate(extras):
-            p.set_number(i+1)
-            output += '{}\n'.format(p.pretty())
-
     print(output)
     with open('output.txt','w') as f:
         f.write(output)
@@ -225,7 +216,7 @@ Program.max_overlaps = 0
 # Main Program
 #--------------
 if __name__ == '__main__':
-    include_all, infile, max_overlaps = parse_args()
+    infile, max_overlaps = parse_args()
     if infile:
         with open(infile,'r') as f:
             contents = f.read()
@@ -236,5 +227,5 @@ if __name__ == '__main__':
     Program.max_overlaps = max_overlaps
     echo_inputs(seqs)
     programs = solve(Program(),seqs)
-    output(programs, seqs, include_all)
+    output(programs, seqs)
 

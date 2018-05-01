@@ -18,7 +18,6 @@ def test_simple_ordered_case():
     danceSeqs[0].order = 1
     danceSeqs[3].order = 5
     ps = solve(Program(),danceSeqs)
-    ps = order_respecting_programs(ps)
     assert len(ps) == 1
     p = ps[0]
     assert p.dance_seqs[0].dances[0].dancers == set(['a','b'])
@@ -58,7 +57,6 @@ def test_overlap_with_order_case():
     danceSeqs[3].order = 4
     Program.max_overlaps = 1
     ps = solve(Program(),danceSeqs)
-    ps = order_respecting_programs(ps)
     # should be one solution: ab cd bc de
     assert len(ps) == 1
  
