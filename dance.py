@@ -164,7 +164,11 @@ def validate_order(seqs):
         if s.order != None and s.order < 1 \
                 or s.before != None and s.before <= 1 \
                 or s.order != None and s.order > n \
-                or s.after != None and s.after >= n:
+                or s.after != None and s.after >= n \
+                or s.after != None and s.before != None and \
+                    s.after >= s.before - 1 \
+                or s.order != None and \
+                    (s.after != None or s.before != None):
             raise ValueError("Special ordering out of range for sequence {}" \
                     .format(s))
 
