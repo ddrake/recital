@@ -155,7 +155,16 @@ def parse_contents(contents):
     for line in lines:
         seq, order, before, after = parse_dance_sequence(line)
         seqs.append(DanceSequence(seq, order=order, before=before, after=after))
+    validate_order(seqs)
     return seqs
+
+def validate_order(seqs):
+    n = len(seqs)
+    for s in seqs:
+        if s.order and s.order < 1 or s.before and s.before <= 1 \
+                or s.order and s.order > n or s.after and s.after >= n:
+            raise ValueError("Special ordering out of range for sequence {}" \
+                    .format(s))
 
 def parse_dance_sequence(line):
     seqinfo = line.strip().split('|')
