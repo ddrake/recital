@@ -24,17 +24,17 @@ class DanceSequence:
             raise ValueError('Each sequence must contain at least one dance')
         
         self.dances = dances
-        self.order = int(order) if order else None
-        self.before = int(before) if before else None
-        self.after = int(after) if after else None
+        self.order = int(order) if order != None else None
+        self.before = int(before) if before != None else None
+        self.after = int(after) if after != None else None
 
     def __str__(self):
         order_str = ""
-        if self.order:
+        if self.order != None: 
             order_str += '{0:d} '.format(self.order)
-        if self.after:
+        if self.after != None:
             order_str += '>{0:d} '.format(self.after)
-        if self.before:
+        if self.before != None:
             order_str += '<{0:d} '.format(self.before)
         order_str = order_str + '| ' if order_str else ''
         return order_str + ', '.join([str(dance) for dance in self.dances])
@@ -85,9 +85,9 @@ class Program:
         if any(s.order == position for s in seqs):
             return [s for s in seqs if s.order == position]
         return [s for s in seqs if \
-                (not s.order or s.order == position) and
-                (not s.before or s.before > position) and 
-                (not s.after or s.after < position)]
+                (s.order == None or s.order == position) and
+                (s.before == None or s.before > position) and 
+                (s.after == None or s.after < position)]
 
 #--------
 # Solver
@@ -161,8 +161,10 @@ def parse_contents(contents):
 def validate_order(seqs):
     n = len(seqs)
     for s in seqs:
-        if s.order and s.order < 1 or s.before and s.before <= 1 \
-                or s.order and s.order > n or s.after and s.after >= n:
+        if s.order != None and s.order < 1 \
+                or s.before != None and s.before <= 1 \
+                or s.order != None and s.order > n \
+                or s.after != None and s.after >= n:
             raise ValueError("Special ordering out of range for sequence {}" \
                     .format(s))
 
@@ -181,7 +183,7 @@ def parse_dance_sequence(line):
     return seq, order, before, after
 
 def parse_order_info(orderinfo):
-    porder = re.compile('(?<![<>])(\d+)')
+    porder = re.compile('(?<![<>\d])(\d+)')
     pbefore = re.compile('\<(\d+)')
     pafter = re.compile('\>(\d+)')
     after, before, order = None, None, None
