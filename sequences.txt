@@ -3,7 +3,9 @@
 # separate dancers in a dance by spaces
 # ignore blank lines and lines preceded by a pound sign
 # optional dance name separated from dancers by a colon
-# optional sequence number for special ordering separated by pipe "|"
+# optional order, before or after (or combination) 
+# for before 5 use <5, for after 5, use >5 (no space between > and 5)
+# for special ordering separated by pipe "|"
 
 # sequence: dance 1; dance 2
 1| "Gavotte": Joe Jan Amy; "Free Jazz": Sue Ann Jeff Sam John Josie
@@ -13,4 +15,4 @@
 "Love Spelled Backwards": Adam Zed Phil Kim
 "Cat and Mouse": Ana Betty Zoe Ann Jeff
 "Get Happy": Sue John Josie Fred Stu Ann
-8| "Cats": Lucy Sadie Ann; "Kelsey's Cat": Jeff Josie Betty Joe Amy
+>6 and <10| "Cats": Lucy Sadie Ann; "Kelsey's Cat": Jeff Josie Betty Joe Amy

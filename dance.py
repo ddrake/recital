@@ -161,9 +161,7 @@ def parse_dance_sequence(line):
     seqinfo = line.strip().split('|')
     if len(seqinfo) == 2:
         orderinfo, dances = seqinfo
-        print(orderinfo)
         order, before, after = parse_order_info(orderinfo)
-        print(order, before, after)
     elif len(seqinfo) == 1:
         order, before, after, dances = None, None, None, seqinfo[0]
     else: raise ValueError("Can't parse dance sequence")
