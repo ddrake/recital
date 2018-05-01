@@ -56,8 +56,7 @@ class Program:
         self.number = number
 
     def can_add_seq(self, seq):
-        print("in can add with self.isect_ct(seq)={0:d}, overlaps={1:d}, max={2:d}".format(self.isect_ct(seq), self.overlaps, Program.max_overlaps))
-        return self.isect_ct(seq) + self.overlaps <= Program.max_overlaps
+        return (self.isect_ct(seq) + self.overlaps) <= Program.max_overlaps
 
     def add_seq(self, seq):
         if self.can_add_seq(seq):
@@ -68,11 +67,13 @@ class Program:
                     + "-- too many overlaps.")
 
     def isect_ct(self, seq):
-        return 0 if not self.dance_seqs else self.dance_seqs[-1].isect_ct(seq)
+        return 0 if len(self.dance_seqs) == 0 \
+                else self.dance_seqs[-1].isect_ct(seq)
 
     def dances(self):
         return [dance for seq in self.dance_seqs for dance in seq.dances]
 
+    @staticmethod
     def allowed(seqs, position):
         if any(s.order == position for s in seqs):
             return [s for s in seqs if s.order == position]
@@ -97,7 +98,6 @@ def solve(cur_prog, seqs, level=1):
     if not seqs:
         return [cur_prog]
     allowed = Program.allowed(seqs, position)
-    print("position is ", position, ", ", len(allowed), " allowed")
     for i, s in enumerate(allowed):
         if level == 1:
             print("Checking sequence {0:d}...".format(i+1))
@@ -194,20 +194,17 @@ def echo_inputs(seqs):
     for s in seqs:
         output += '{0}\n'.format(s)
     print(output)
+    with open('output.txt','a') as f:
+        f.write(output)
 
 def output(programs, seqs):
-    output = 'maximum allowed overlaps: {0:d}\n'.format(Program.max_overlaps)
-    output += 'input sequences \n'
-    for s in seqs:
-        output += '{0}\n'.format(s)
-
     results = programs
-    output += '\n{0:d} program(s) found.\n'.format(len(results))
+    output = '\n{0:d} program(s) found.\n'.format(len(results))
     for i, p in enumerate(results):
         p.set_number(i+1)
         output += '{}\n'.format(p.pretty())
     print(output)
-    with open('output.txt','w') as f:
+    with open('output.txt','a') as f:
         f.write(output)
 
 # Set a default value
