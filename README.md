@@ -50,7 +50,7 @@ optional arguments:
 ```
 ### Installation
 ```
-git clone git@github.com:ddrake/recital.git 
+$ git clone git@github.com:ddrake/recital.git 
 ```
 
 ### Examples 
@@ -58,11 +58,11 @@ git clone git@github.com:ddrake/recital.git
 #### Test with random data allowing one overlap
 ```
 cd recital
-./dance.py -n=1
+$ ./dance.py -n=1
 ```
 
 #### Test with sample input file allowing two overlaps
 ```
 cd recital
-./dance.py -f sequences.txt -n=2
+$ ./dance.py -f sequences.txt -n=2
 ```
