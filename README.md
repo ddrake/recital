@@ -21,7 +21,7 @@ To set a dance sequence to specific order within the program, we preface its def
 ```
 1 | "A Dance": Joe Sue
 ```
-specifies a dance sequence with a single dance which must appear first in the program, and 
+specifies a dance sequence with a single dance which must appear first in the program.  The following example 
 ```
 >3 <8 | "Fancy Dance": Mary Bob Sue; "Quick Dance": Joe Ann Sue Bill
 ```
@@ -57,12 +57,12 @@ $ git clone git@github.com:ddrake/recital.git
 
 #### Test with random data allowing one overlap
 ```
-cd recital
+$ cd recital
 $ ./dance.py -n=1
 ```
 
 #### Test with sample input file allowing two overlaps
 ```
-cd recital
+$ cd recital
 $ ./dance.py -f sequences.txt -n=2
 ```
