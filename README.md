@@ -3,7 +3,7 @@
 ## Generate optimal programs for a dance recital
 
 ### Description
-In preparing for a recital, we assume that a number of dance pieces have been prepared so that each piece has a title and a fixed set of dancers.  In designing an optimal program (sequence of dance pieces) for a recital, we wish to eliminate or minimize "overlaps", i.e. scenarios in which one or more dancers must appear in consecutive sequences.
+In preparing for a recital, we assume that a number of dance pieces have been prepared so that each piece has a title and a fixed set of dancers.  In designing an optimal program (sequence of dance pieces) for a recital, we wish to eliminate or minimize "overlaps", i.e. scenarios in which one or more dancers must appear in consecutive pieces.
 
 Some of the dance pieces may be logically grouped together in some order.  We call such a grouping a "dance sequence".  When designing a program, we wish to retain the internal order of each dance sequence, while considering rearrangements of the sequences within the program. 
 
